@@ -89,6 +89,10 @@
     function formatDate(date) {
       return `${date.getDate()} ${monthNames[date.getMonth()]} ${date.getFullYear()}`;
     }
+    function formatDateTime(date) {
+      const time = date.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+      return `${formatDate(date)} ${time}`;
+    }
     function showStatus(type, message) {
       const icon = type === 'success'
         ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="m8 12 2.5 2.5L16 9"/></svg>'
@@ -112,7 +116,8 @@
         subject: String(data.get('subject')).trim(),
         message: String(data.get('message')).trim(),
         delivery_choice: 'Anlık test gönderimi',
-        delivery_date: `${formatDate(now)} ${now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })}`,
+        delivery_date: formatDateTime(now),
+        request_date: formatDateTime(now),
         reply_to: String(data.get('to_email')).trim()
       };
 
@@ -144,6 +149,7 @@
       const data = new FormData(form);
       const delayMonths = Number(data.get('delay'));
       const deliveryDate = futureDate(delayMonths);
+      const requestDate = new Date();
       const delayLabels = {6:'6 ay sonra',12:'1 yıl sonra',36:'3 yıl sonra',60:'5 yıl sonra',120:'10 yıl sonra'};
       const params = {
         sender_name: String(data.get('sender_name')).trim(),
@@ -152,6 +158,7 @@
         message: String(data.get('message')).trim(),
         delivery_choice: delayLabels[delayMonths],
         delivery_date: formatDate(deliveryDate),
+        request_date: formatDateTime(requestDate),
         reply_to: String(data.get('to_email')).trim()
       };
 
